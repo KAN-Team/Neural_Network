@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+import random
+from sklearn.utils import shuffle
 
 
 def read_dataset():
@@ -18,7 +21,7 @@ def read_dataset():
         cnt = cnt + 1
 
     df = pd.DataFrame(all_samples, columns=['X1', 'X2', 'X3', 'X4', 'Y'])
-    # print(df['X1'])
+
     return df
 
 
@@ -34,13 +37,16 @@ def dis_features_figures(df):
 
 
 def concatinate_two_lists(first_list, second_list):
-    out = [y for x in [first_list, second_list] for y in x]
+    out = []
+    for i in range(len(first_list)):
+        out.append(float(first_list[i]))
+    for j in range(len(second_list)):
+        out.append(float(second_list[j]))
     return out
 
 
 # Remember Random (Shuffle)
-def data_mapping(df):
-    # Select Features (X1, X4) and Classes (1- Setosa, 2- versicolor)
+def map_data(df):
     X1 = df['X1']
     X4 = df['X4']
     target = df['Y'][:100]
@@ -96,27 +102,51 @@ def signum_activation(vk):
     return out
 
 
-def train_perceptron(X1_train, X4_train, Y_train):
-    learning_rate = 0.01
-    training_epochs = 25
+def train_perceptron(feature1_train, feature2_train, Y_train):
+    learning_rate = 0.0001
+    training_epochs = 200
     bias = 1
-    neuron1_weights = [0.2, 0.7]
+    neuron1_weights = [2.1, -1.1]
 
     for epoch in range(training_epochs):
-        for i in range(len(X1_train)):
-            neuron1_net = float(neuron1_weights[0]) * float(X1_train[i])
-            vk = neuron1_net + float((neuron1_weights[1]) * float(X4_train[i])) + bias
-            y = signum_activation(vk)
-            if y != Y_train[i]:  # update weights
-                error = float(Y_train[i] - y)
-                neuron1_weights[0] = float(neuron1_weights[0]) + (learning_rate * error * float(X1_train[i]))
-                neuron1_weights[1] = float(neuron1_weights[1]) + (learning_rate * error * float(X4_train[i]))
+        for i in range(len(feature1_train)):
+            vk = (neuron1_weights[0] * feature1_train[i]) + (neuron1_weights[1] * feature2_train[i]) + bias
+            y_predict = signum_activation(vk)
+            if y_predict != Y_train[i]:  # Update Weights
+                error = Y_train[i] - y_predict
+                neuron1_weights[0] = neuron1_weights[0] + (learning_rate * error * feature1_train[i])
+                neuron1_weights[1] = neuron1_weights[1] + (learning_rate * error * feature2_train[i])
 
     return neuron1_weights
 
 
+def draw_learned_classes(feature1_train, feature2_train,  Y_train, weights):
+    y = np.dot(feature1_train, weights[0])
+
+    plt.figure('figure of Perceptron')
+    plt.plot(feature1_train, y, '-r', label='y= x1*W1 + X2*W2 + bias')
+    plt.scatter(feature1_train[:30], Y_train[:30])
+    plt.scatter(feature1_train[30:], Y_train[30:])
+    plt.title('Graph of Perceptron')
+    plt.xlabel('x', color='#1C2833')
+    plt.ylabel('y', color='#1C2833')
+    plt.legend(loc='upper right')
+    plt.show()
+
+
+def classify_test(feature1_test, feature2_test, Y_test, weights):
+    y_prediction = []
+    vk = np.dot(feature1_test, weights[0]) + np.dot(feature2_test, weights[1])
+    for i in range(len(vk)):
+        y_prediction.append(signum_activation(vk[i]))
+
+    print("Total Accuracy: {}%".format(accuracy_score(Y_test, y_prediction) * 100))
+
+
 if __name__ == "__main__":
     data_frame = read_dataset()
-    dis_features_figures(data_frame)
-    X1_train, X4_train, X1_test, X4_test, Y_train, Y_test = data_mapping(data_frame)
-    weights = train_perceptron(X1_train, X4_train, Y_train)
+    # dis_features_figures(data_frame)
+    feature1_train, feature2_train, feature1_test, feature2_test, Y_train, Y_test = map_data(data_frame)
+    weights = train_perceptron(feature1_train, feature2_train, Y_train)
+    # draw_learned_classes(feature1_train, feature2_train,  Y_train, weights)
+    classify_test(feature1_test, feature2_test, Y_test, weights)
