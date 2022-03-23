@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
+from tkinter import *
 import random
 from sklearn.utils import shuffle
 
@@ -29,10 +30,11 @@ def dis_features_figures(df):
     for i in range(1, 5):
         for j in range(i + 1, 5):
             plt.figure('figure X{}, X{}'.format(i, j))
-            plt.scatter(df['X{}'.format(i)], df['Y'])
-            plt.scatter(df['X{}'.format(j)], df['Y'])
-            plt.xlabel('X')
-            plt.ylabel('Y')
+            plt.scatter(df['X{}'.format(i)][:50], df['X{}'.format(j)][:50])
+            plt.scatter(df['X{}'.format(i)][50:100], df['X{}'.format(j)][50:100])
+            plt.scatter(df['X{}'.format(i)][100:], df['X{}'.format(j)][100:])
+            plt.xlabel('X{}'.format(i))
+            plt.ylabel('X{}'.format(j))
             plt.show()
 
 
@@ -47,7 +49,7 @@ def concatinate_two_lists(first_list, second_list):
 
 # Remember Random (Shuffle)
 def map_data(df):
-    X1 = df['X1']
+    X1 = df['X2']
     X4 = df['X4']
     target = df['Y'][:100]
     Y = []
@@ -120,14 +122,16 @@ def train_perceptron(feature1_train, feature2_train, Y_train):
     return neuron1_weights
 
 
-def draw_learned_classes(feature1_train, feature2_train,  Y_train, weights):
-    y = np.dot(feature1_train, weights[0])
+def draw_learned_classes(type, num, feature1_train, feature2_train, weights):
+    # w1x1 + w2x2 +bias = 0
+    # x2 = ( (-w1x1) - bias ) / w2
+    x2 = (-np.dot(feature1_train, weights[0])) / weights[1]
 
-    plt.figure('figure of Perceptron')
-    plt.plot(feature1_train, y, '-r', label='y= x1*W1 + X2*W2 + bias')
-    plt.scatter(feature1_train[:30], Y_train[:30])
-    plt.scatter(feature1_train[30:], Y_train[30:])
-    plt.title('Graph of Perceptron')
+    plt.figure('figure of Perceptron {}'.format(type))
+    plt.plot(feature1_train, x2, '-r', label='y= x1*W1 + X2*W2 + bias')
+    plt.scatter(feature1_train[:num], feature2_train[:num])
+    plt.scatter(feature1_train[num:], feature2_train[num:])
+    plt.title('Graph of Perceptron {}'.format(type))
     plt.xlabel('x', color='#1C2833')
     plt.ylabel('y', color='#1C2833')
     plt.legend(loc='upper right')
@@ -145,8 +149,9 @@ def classify_test(feature1_test, feature2_test, Y_test, weights):
 
 if __name__ == "__main__":
     data_frame = read_dataset()
-    # dis_features_figures(data_frame)
+    dis_features_figures(data_frame)
     feature1_train, feature2_train, feature1_test, feature2_test, Y_train, Y_test = map_data(data_frame)
     weights = train_perceptron(feature1_train, feature2_train, Y_train)
-    # draw_learned_classes(feature1_train, feature2_train,  Y_train, weights)
+    draw_learned_classes('Training', 30, feature1_train, feature2_train, weights)
+    draw_learned_classes('Testing', 20, feature1_test, feature2_test, weights)
     classify_test(feature1_test, feature2_test, Y_test, weights)
