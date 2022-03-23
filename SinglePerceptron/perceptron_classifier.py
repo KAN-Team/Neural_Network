@@ -24,12 +24,11 @@ class PerceptronClassifier:
 
         return neuron1_weights
 
-    def classify_test(self, feature1_test, feature2_test, Y_test, weights):
+    def classify_test(self, feature1_test, feature2_test, Y_test, weights, bias):
         y_prediction = []
-        vk = np.dot(feature1_test, weights[0]) + np.dot(feature2_test, weights[1])
+        vk = np.dot(feature1_test, weights[0]) + np.dot(feature2_test, weights[1]) + bias
         for i in range(len(vk)):
             y_prediction.append(self.signum_activation(vk[i]))
 
-        print("Total Accuracy: {}%".format(accuracy_score(Y_test, y_prediction) * 100))
-
-# Remember Confusion Matrix
+        total_accuracy = accuracy_score(Y_test, y_prediction) * 100
+        return total_accuracy, y_prediction

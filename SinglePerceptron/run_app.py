@@ -21,6 +21,8 @@ class UserInterface:
         self.selected_feature2 = 'X4'
         self.selected_class1 = 'Iris-setosa'
         self.selected_class2 = 'Iris-versicolor'
+        self.total_accuracy = 0
+        self.accuracy_label = StringVar()
 
     def determine_features(self):
         if self.select_features.get() == '1':
@@ -66,51 +68,96 @@ class UserInterface:
         weights = self.classifier.train_perceptron(feature1_train, feature2_train, Y_train,
                   self.learning_rate_var.get(), self.number_of_epochs_var.get(), self.bias_checkbox.get())
 
-        self.plotting.draw_learned_classes('Training', 30, feature1_train, feature2_train, weights)
-        self.plotting.draw_learned_classes('Testing', 20, feature1_test, feature2_test, weights)
+        self.plotting.draw_learned_classes('Training', 30, feature1_train, feature2_train,
+                                           weights, self.bias_checkbox.get())
+        self.plotting.draw_learned_classes('Testing', 20, feature1_test, feature2_test,
+                                           weights, self.bias_checkbox.get())
 
-        self.classifier.classify_test(feature1_test, feature2_test, Y_test, weights)
-        self.root.quit()
+        self.total_accuracy, y_predict = self.classifier.classify_test(feature1_test, feature2_test, Y_test,
+                                                                       weights, self.bias_checkbox.get())
+
+        self.plotting.draw_confusion_matrix(Y_test, y_predict)
+        self.accuracy_label.set("{}%".format(self.total_accuracy))
+        #self.root.quit()
 
     def create_ui(self):
         self.root.title('Perceptron Classification App')
         self.root.geometry('840x600')
+        self.root.config(bg="#DECBA4")
 
         welcome_title = StringVar()
         l = Label(self.root, textvariable=welcome_title)
-        welcome_title.set("Welcome to Perceptron App")
+        welcome_title.set("/Welcome to Perceptron App\\")
+        l.config(font=('Comic Sans MS bold', 15), fg="#000", bg="#DECBA4")
         l.pack()
 
-        Label(self.root, text="Select Features").place(x=40, y=40)
+        l = Label(self.root, text="Select Features:")
+        l.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        l.place(x=40, y=40)
+
         Radiobutton(self.root, text="X1 & X2", value=1, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=40, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=40, y=80)
         Radiobutton(self.root, text="X1 & X3", value=2, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=130, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=130, y=80)
         Radiobutton(self.root, text="X1 & X4", value=3, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=220, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=220, y=80)
         Radiobutton(self.root, text="X2 & X3", value=4, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=310, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=310, y=80)
         Radiobutton(self.root, text="X2 & X4", value=5, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=400, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=400, y=80)
         Radiobutton(self.root, text="X3 & X4", value=6, variable=self.select_features,
-                    indicator=1, background="light blue").place(x=490, y=80)
+                    indicator=1, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=490, y=80)
 
-        Label(self.root, text="Select Classes").place(x=40, y=130)
+        l = Label(self.root, text="Select Classes:")
+        l.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        l.place(x=40, y=130)
+
         Radiobutton(self.root, text="C1 & C2", value=1, variable=self.select_classes,
-                    indicator=2, background="light blue").place(x=40, y=170)
+                    indicator=2, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=40, y=170)
         Radiobutton(self.root, text="C1 & X3", value=2, variable=self.select_classes,
-                    indicator=2, background="light blue").place(x=130, y=170)
+                    indicator=2, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=130, y=170)
         Radiobutton(self.root, text="C2 & C3", value=3, variable=self.select_classes,
-                    indicator=2, background="light blue").place(x=220, y=170)
+                    indicator=2, font=('Comic Sans MS bold', 10), fg="black", bg="#DECBA4"
+                    ).place(x=220, y=170)
 
-        Label(self.root, text="Learning Rate").place(x=40, y=200)
-        Entry(self.root, textvariable=self.learning_rate_var, width=30).place(x=180, y=200)
+        l = Label(self.root, text="Learning Rate:")
+        l.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        l.place(x=40, y=220)
 
-        Label(self.root, text="Number of Epochs").place(x=40, y=250)
-        Entry(self.root, textvariable=self.number_of_epochs_var, width=30).place(x=180, y=250)
+        e = Entry(self.root, textvariable=self.learning_rate_var, width=30)
+        e.config(font=('Comic Sans MS bold', 10), fg="#000", bg="#FFF")
+        e.place(x=210, y=225)
 
-        Checkbutton(self.root, text="Add Bias", variable=self.bias_checkbox).place(x=40, y=300)
-        Button(self.root, text="Classify", width=15, command=self.click_classify).place(x=40, y=350)
+        l = Label(self.root, text="Number of Epochs:")
+        l.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        l.place(x=40, y=265)
+
+        e = Entry(self.root, textvariable=self.number_of_epochs_var, width=30)
+        e.config(font=('Comic Sans MS bold', 10), fg="#000", bg="#FFF")
+        e.place(x=210, y=270)
+
+        l = Label(self.root, text="Overall Accuracy:")
+        l.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        l.place(x=300, y=335)
+        l = Label(self.root, textvariable=self.accuracy_label)
+        l.config(font=('Comic Sans MS bold', 10), fg="#FF0000", bg="#DECBA4")
+        l.place(x=450, y=338)
+
+        c = Checkbutton(self.root, text="Add Bias", variable=self.bias_checkbox)
+        c.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#DECBA4")
+        c.place(x=40, y=330)
+        b = Button(self.root, text="Classify", width=15, command=self.click_classify)
+        b.config(font=('Comic Sans MS bold', 12), fg="#0000FF", bg="#FFF")
+        b.place(x=150, y=400)
+
         self.root.mainloop()
 
 
