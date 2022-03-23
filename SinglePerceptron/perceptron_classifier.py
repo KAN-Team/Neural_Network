@@ -11,9 +11,6 @@ class PerceptronClassifier:
         return out
 
     def train_perceptron(self, feature1_train, feature2_train, Y_train, learning_rate, training_epochs, bias):
-        #learning_rate = 0.0001
-        #training_epochs = 200
-        #bias = 1
         neuron1_weights = [2.1, -1.1]
 
         for epoch in range(training_epochs):
