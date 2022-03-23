@@ -3,7 +3,7 @@
 
 ### Description:
 ### Implement the Perceptron learning algorithm on a single layer neural networks which can be able to classify a stream of input data to one of a set of predefined classes.
-- ### Iris Data Include 3 Classes `setosa`, `versicolor`, `virginica` and 4 Features `X1`, `X2`, `X3`, `X4`
+- Iris Data Include 3 Classes `setosa`, `versicolor`, `virginica` and 4 Features `X1`, `X2`, `X3`, `X4`
 
 ### 1- training
 - Use the iris data in both your training and testing processes. (Each class has 50 samples: train NN with 30 non-repeated samples randomly selected, and test it with the remaining 20 samples)
