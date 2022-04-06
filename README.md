@@ -3,6 +3,12 @@
 
 ### Description:
 ### Implement the Perceptron learning algorithm on a single layer neural networks which can be able to classify a stream of input data to one of a set of predefined classes.
+
+## Task 2 (Adaline Classification Model)
+
+### Description:
+### Implement the Adaline learning algorithm using MSE on a single layer neural networks which can be able to classify a stream of input data to one of a set of predefined classes.
+
 - Iris Data Include 3 Classes `setosa`, `versicolor`, `virginica` and 4 Features `X1`, `X2`, `X3`, `X4`
 
 ### 1- training
