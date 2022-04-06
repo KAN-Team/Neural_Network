@@ -30,7 +30,7 @@ class AdalineClassifier:
                 neuron1_weights[1] = neuron1_weights[1] + (learning_rate * error * feature1_train[i])
                 neuron1_weights[2] = neuron1_weights[2] + (learning_rate * error * feature2_train[i])
 
-            # loop for calculating MES
+            # loop for calculating MSE
             for i in range(len(feature1_train)):
                 new_y_predict = (neuron1_weights[0] * bias) + (neuron1_weights[1] *
                                                                feature1_train[i]) + (
