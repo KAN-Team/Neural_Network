@@ -17,7 +17,7 @@ class PerceptronClassifier:
             for i in range(len(feature1_train)):
                 vk = (neuron1_weights[0] * feature1_train[i]) + (neuron1_weights[1] * feature2_train[i]) + bias
                 y_predict = self.signum_activation(vk)
-                if y_predict != Y_train[i]:  # Update Weights
+                if y_predict != Y_train[i]:  # Update the Weights
                     error = Y_train[i] - y_predict
                     neuron1_weights[0] = neuron1_weights[0] + (learning_rate * error * feature1_train[i])
                     neuron1_weights[1] = neuron1_weights[1] + (learning_rate * error * feature2_train[i])
